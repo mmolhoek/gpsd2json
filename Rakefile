@@ -3,34 +3,34 @@
 require 'rubygems'
 require 'bundler'
 begin
-  Bundler.setup(:default, :development)
+    Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
-  $stderr.puts e.message
-  $stderr.puts "Run `bundle install` to install missing gems"
-  exit e.status_code
+    $stderr.puts e.message
+    $stderr.puts "Run `bundle install` to install missing gems"
+    exit e.status_code
 end
 require 'rake'
 require 'juwelier'
 Juwelier::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
-  gem.name = "gpsd2json"
-  gem.homepage = "http://github.com/mmolhoek/gpsd2json"
-  gem.license = "MIT"
-  gem.summary = %Q{ruby gem to access the gpsd daemon}
-  gem.description = %Q{This gem can be used to talk to the gps daemon}
-  gem.email = "mischamolhoek@gmail.com"
-  gem.authors = ["Mischa Molhoek"]
+    # gem is a Gem::Specification... see http://guides.rubygems.org/specification-reference/ for more options
+    gem.name = "gpsd2json"
+    gem.homepage = "http://github.com/mmolhoek/gpsd2json"
+    gem.license = "MIT"
+    gem.summary = %Q{ruby gem to access the gpsd daemon}
+    gem.description = %Q{This gem can be used to talk to the gps daemon}
+    gem.email = "mischamolhoek@gmail.com"
+    gem.authors = ["Mischa Molhoek"]
 
-  # dependencies defined in Gemfile
-  gem.files = Dir.glob('lib/**/*.rb')
+    # dependencies defined in Gemfile
+    gem.files = Dir.glob('lib/**/*.rb')
 end
 
 Juwelier::RubygemsDotOrgTasks.new
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
+    test.libs << 'lib' << 'spec'
+    test.pattern = 'spec/*_test.rb'
+    test.verbose = true
 end
 
 require 'yard-doctest'

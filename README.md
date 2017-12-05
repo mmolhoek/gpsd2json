@@ -24,4 +24,6 @@ gps.stop
 bundle
 #irb
 bundle exec irb -r ./lib/gpsd2json.rb
+#test
+rspec --color -fd spec/gpsd_client_test.rb
 ```

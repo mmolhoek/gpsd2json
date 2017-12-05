@@ -1,7 +1,8 @@
 require 'socket'
+require 'json'
 require 'date'
 class GPSD2JSON
-    VERBOSE = true
+    VERBOSE = false
     # A simple gpsd client that dump's json objects contianing all info received from the gpsd deamon
     # you need to at least setup either the raw callback (on_raw_change) or position callback (on_position_change) to use GPSD2JSON. the raw callback just passes the json objects it received from the daemon on to the block you pass it. the on_position_change and on_satellites_change are a bit easier to use.
     # @example Easy setup
@@ -63,7 +64,7 @@ class GPSD2JSON
             init_socket
             while not @socket_ready
                 #wait for it to be ready
-                sleep 0.3
+                sleep 0.1
             end
             # it's ready, tell it to start watching and passing
             puts "socket ready, start watching" if VERBOSE
@@ -91,12 +92,16 @@ class GPSD2JSON
         return "waiting for connection with gpsd" if @socket_ready == false
     end
 
-    # Stop the listening loop and close the socket
+    # Stop the listening loop and close the socket. It will read the last bit of data from the socket, close it, and clean it up
     def stop
+        # last read
+        read_from_socket
+        # then close
+        close_socket
+        # then cleanup
         Thread.kill(@socket_init_thread) if @socket_init_thread
         Thread.kill(@trackthread) if @trackthread
         @socket_ready = false
-        close_socket
     end
 
     # initialize gpsd socket
@@ -107,7 +112,7 @@ class GPSD2JSON
             @socket = TCPSocket.new(@host, @port)
             @socket.puts("w+")
             puts "reading socket..." if VERBOSE
-            welkom = JSON.parse(@socket.gets) rescue nil
+            welkom = ::JSON.parse(@socket.gets)
             puts "welkom: #{welkom.inspect}" if VERBOSE
             @socket_ready = (welkom and welkom['class'] and welkom['class'] == 'VERSION')
             puts "@socket_ready: #{@socket_ready.inspect}" if VERBOSE
@@ -121,12 +126,16 @@ class GPSD2JSON
     def read_from_socket
         if @socket_ready
             begin
-                parse_socket_json(json: JSON.parse(@socket.gets.chomp))
+                if input = @socket.gets.chomp and not input.to_s.empty?
+                    parse_socket_json(json: JSON.parse(input))
+                else
+                    sleep 0.1
+                end
             rescue
                 puts "error reading from socket: #{$!}" if VERBOSE
             end
         else
-            sleep 0.5
+            sleep 0.1
         end
     end
 
