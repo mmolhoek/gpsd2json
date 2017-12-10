@@ -61,8 +61,8 @@ class GPSD2JSON
         # background thread that is used to open the socket and wait for it to be ready
         @socket_init_thread = Thread.start do
             #open the socket
-            init_socket
             while not @socket_ready
+                init_socket
                 #wait for it to be ready
                 sleep 0.1
             end
@@ -94,8 +94,8 @@ class GPSD2JSON
 
     # Stop the listening loop and close the socket. It will read the last bit of data from the socket, close it, and clean it up
     def stop
-        # last read
-        read_from_socket
+        # last read(s)
+        3.times { read_from_socket }
         # then close
         close_socket
         # then cleanup
@@ -150,22 +150,11 @@ class GPSD2JSON
             # gps deamon is ready and will send other packets, not needed yet
         when 'TPV'
             # gps position
-            #  "tag"=>"RMC",
-            #  "device"=>"/dev/ttyS0",
-            #  "mode"=>3,
-            #  "time"=>"2017-11-28T12:54:54.000Z",
-            #  "ept"=>0.005,
-            #  "lat"=>52.368576667,
-            #  "lon"=>4.901715,
-            #  "alt"=>-6.2,
-            #  "epx"=>2.738,
-            #  "epy"=>3.5,
-            #  "epv"=>5.06,
-            #  "track"=>198.53,
-            #  "speed"=>0.19,
-            #  "climb"=>0.0,
-            #  "eps"=>7.0,
-            #  "epc"=>10.12
+            #  "tag"=>"RMC", #  "device"=>"/dev/ttyS0", #  "mode"=>3,
+            #  "time"=>"2017-11-28T12:54:54.000Z", #  "ept"=>0.005, #  "lat"=>52.368576667,
+            #  "lon"=>4.901715, #  "alt"=>-6.2, #  "epx"=>2.738, #  "epy"=>3.5,
+            #  "epv"=>5.06, #  "track"=>198.53, #  "speed"=>0.19, #  "climb"=>0.0,
+            #  "eps"=>7.0, #  "epc"=>10.12
             if json['mode'] > 1
                #we have a 2d or 3d fix
                 if is_new_measurement(json: json)
@@ -200,27 +189,11 @@ class GPSD2JSON
     # checks if the new location object return by the deamon is different enough compared
     # to the last one, to use it. it could be disregarded for example because the speed is to low, and you don't want to have the location jumping around when you stand still
     def is_new_measurement(json:)
-        if @last.nil? or (@last['lat'] != json['lat'] and @last['lon'] != json['lon'] and json['speed'] > @min_speed)
+        if @last.nil? or (@last['lat'] != json['lat'] and @last['lon'] != json['lon'] and json['speed'] >= @min_speed)
             @last = json
             return true
         end
         return false
-    end
-
-    # This will tell the gps daemon we want to get the coordinates of
-    # any gps connected. when calling this we have to start reading
-    # the socket and keep reading it as otherwise the socket will overflow
-    # get closed by the daemon
-    def start_to_listen_socket
-        begin
-            if @socket_ready
-                @socket.puts '?WATCH={"enable":true,"json":true}'
-                return true
-            end
-        rescue
-            puts "#$!" if VERBOSE
-            return false
-        end
     end
 
     # Close the gps deamon socket
