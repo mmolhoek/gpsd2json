@@ -1,29 +1,46 @@
 # gpsd2json
 ruby client to receive JSON formatted info of the gps daemon
 
-# usage
+## initialization
 ```bash
-#start irb session
-irb
 require 'gpsd2json'
 gps = GPSD2JSON.new()
-# set callback if any data is received
-gps.on_raw_data { |json| STDERR.puts json.inspect}
-# or if you want to make it easy on yourself
+```
+## First you set some callbacks on the most important changes
+```bash
 gps.on_position_change { |pos| STDERR.puts pos.inpect }
 gps.on_satellites_change { |sats| STDERR.puts "#{sats.count} found, #{sats.count{|sat| sat['used']} are used" }
-#start watching
+```
+## Then, your start watching
+```bash
 gps.start
-# stop watching
+```
+after this, the positions will be given to the callback block
+
+## When you had enough, you can stop watching
+```bash
 gps.stop
 ```
 
-# development
+## there is on more callback to receive all data as raw json
 ```bash
-#install
-bundle
-#irb
-bundle exec irb -r ./lib/gpsd2json.rb
-#test
-rspec --color -fd spec/gpsd_client_test.rb
+gps.on_raw_data { |json| STDERR.puts json.inspect}
 ```
+
+## Also, you can change the minimum speed requered to return a position change, with
+```bash
+gps.change_min_speed(speed: <whatever speed>)
+```
+
+## development
+```bash
+# Install
+bundle
+# irb
+bundle exec irb -r ./lib/gpsd2json.rb
+# test
+bundle exec rspec --color -fd spec/gpsd_client_test.rb
+```
+it also have a code coverage dir for you to see if your test set is about 95%
+
+send me PR if you want changes, but only dare to do so when you added the proper tests
