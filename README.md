@@ -13,21 +13,37 @@ cgps
 gem install gps2json
 ```
 
-## initialization
+## Usage
+
+Start an irb session
+
 ```bash
+irb
 require 'gpsd2json'
 gps = GPSD2JSON.new()
 ```
-## First you set some callbacks on the most important changes
+
+Set the callbacks on the position and satellite change events
+
 ```bash
-gps.on_position_change { |pos| STDERR.puts pos.inpect }
+gps.on_position_change { |pos| STDERR.puts "New position: #{pos.inpect}" }
 gps.on_satellites_change { |sats| STDERR.puts "#{sats.count} found, #{sats.count{|sat| sat['used']} are used" }
 ```
-## Then, your start watching
+
+Then, your start watching
+
 ```bash
 gps.start
 ```
-after this, the positions will be given to the callback block
+
+If you have the gps connected you should get the satelites callback first.
+It has to connect te the deamon and the deamon has to tell te gps to start
+dumping the data if it did not do so already, but this should be all done
+withing a second or so.
+
+To get position change callbacks, the gps should have enough sattelites with
+a fix and the speed should be higher then the minimum speed, which defaults to 0.
+
 
 ## When you had enough, you can stop watching
 ```bash
@@ -53,6 +69,6 @@ bundle exec irb -r ./lib/gpsd2json.rb
 # test
 bundle exec rspec --color -fd spec/gpsd_client_test.rb
 ```
-it also have a code coverage dir for you to see if your test set is about 95%
+it also have a code coverage dir for you to see if your test set is above 95%
 
 send me PR if you want changes, but only dare to do so when you added the proper tests
