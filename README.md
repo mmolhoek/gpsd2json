@@ -45,30 +45,35 @@ To get position change callbacks, the gps should have enough sattelites with
 a fix and the speed should be higher then the minimum speed, which defaults to 0.
 
 
-## When you had enough, you can stop watching
+You can stop watching with
+
 ```bash
 gps.stop
 ```
 
-## there is on more callback to receive all data as raw json
+There is also a on_raw_data callback you can use to see all data that is dumped by the deamon
+
 ```bash
 gps.on_raw_data { |json| STDERR.puts json.inspect}
 ```
 
-## Also, you can change the minimum speed requered to return a position change, with
+You can change the minimum speed requered to return a position change, with
+
 ```bash
 gps.change_min_speed(speed: <whatever speed>)
 ```
 
-## development
+## Development
+
 ```bash
 # Install
+git clone git@github.com:mmolhoek/gpsd2json.git
+cd gpsd2json
 bundle
 # irb
 bundle exec irb -r ./lib/gpsd2json.rb
-# test
+# test (with coverage to ./coverage/index.html)
 bundle exec rspec --color -fd spec/gpsd_client_test.rb
 ```
-it also have a code coverage dir for you to see if your test set is above 95%
 
-send me PR if you want changes, but only dare to do so when you added the proper tests
+Send me PR if you want changes, but only dare to do so when you added the proper tests and the overall coverage stays above 95%
