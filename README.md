@@ -1,6 +1,18 @@
 # gpsd2json
 ruby client to receive JSON formatted info of the gps daemon
 
+## Setup
+
+Make sure you have gpsd installed and you have of course a gps connected to your device
+```bash
+# Install
+sudo apt-get install gpsd
+# Check if your gps is available
+cgps
+# Install the gps2json gem
+gem install gps2json
+```
+
 ## initialization
 ```bash
 require 'gpsd2json'
