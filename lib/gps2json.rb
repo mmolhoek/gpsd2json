@@ -25,7 +25,7 @@ class GPSD2JSON
         @port = port
         @trackthread = nil
         @socket_init_thread = nil
-        @min_speed = 0.8 # speed needs to be higher than this to make the gps info count
+        @min_speed = 0 # speed needs to be higher than this to make the gps info count
         @last = nil #last gps info
         @sats = nil # last satellites info
         @json_raw_callback = nil
