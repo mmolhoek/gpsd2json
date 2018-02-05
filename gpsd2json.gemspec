@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Mischa Molhoek"]
-  s.date = "2017-12-12"
+  s.date = "2018-02-05"
   s.description = "This gem can be used to talk to the gps daemon"
   s.email = "mischamolhoek@gmail.com"
   s.extra_rdoc_files = [
@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
     "README.md"
   ]
   s.files = [
-    "lib/gps2json.rb"
+    "lib/gpsd2json.rb"
   ]
   s.homepage = "http://github.com/mmolhoek/gpsd2json"
   s.licenses = ["MIT"]
