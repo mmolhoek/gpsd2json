@@ -6,7 +6,7 @@ SimpleCov.start
 require 'rspec'
 #require 'rspec/mocks'
 
-require 'gps2json'
+require 'gpsd2json'
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = [:should, :expect]
